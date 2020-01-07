@@ -1,0 +1,61 @@
+.main
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+phone-number {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+.phone-number {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 16px;
+    font-family: arial;
+}
+
+.phone-input {
+    width: 1em;
+    border-radius: 0.1em;
+    border: 0.05em solid rgb(220,220,220);
+    margin: 0.15em;
+    padding: 0.2em;
+    line-height: 1.5em;
+    text-align: center;
+    font-family: arial;
+}
+
+.phone-input::placeholder {
+    color: rgb(100,100,100);
+    font-family: arial;
+}
+.phone-input:hover {
+    border-color: rgb(150,150,150);
+}
+
+.phone-input:focus {
+    border-color: rgb(100,100,100);
+}
+
+.phone-input:disabled {
+    background-color: rgb(240,240,240);
+    border-color: rgb(240,240,240);
+    font-family: arial;
+}
+
+.phone-input_error {
+    border-color: red;
+}
+
+.phone-number__error {
+    color: red;
+    font-family: arial;
+    font-size: 0.8em;
+    margin-top: 0.5em;
+}
