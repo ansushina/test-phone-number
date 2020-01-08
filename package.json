@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/.bin/eslint .",
+    "lint-fix": "./node_modules/.bin/eslint --fix ."
   },
   "repository": {
     "type": "git",
@@ -16,7 +18,16 @@
     "url": "https://github.com/ansushina/test-phone-number/issues"
   },
   "homepage": "https://github.com/ansushina/test-phone-number#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
   "dependencies": {
+    "husky": "^4.0.0",
     "webpack": "^4.41.5"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
   }
 }

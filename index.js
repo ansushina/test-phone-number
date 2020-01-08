@@ -1,23 +1,26 @@
 
-function createPhoneNumber(mask = "") {
+function createPhoneNumber(mask = '') {
     const test = /^\+[0-9XI*]{1}\([0-9XI*]{3}\)[0-9XI*]{3}-[0-9XI*]{2}-[0-9XI*]{2}/;
     if (test.test(mask) !== true)
         return;
-    let i = 0;
 
+    let i = 0;
     const number = document.createElement('phone-number');
     const div = document.createElement('div');
     div.classList.add('phone-number');
+    div.classList.add('js-number-div');
     number.appendChild(div);
-    let brackets = '+()-';
     number.value = mask;
     number.errorFlag = false;
+
+    let brackets = '+()-';
     for (let char of mask) {
         if (brackets.indexOf(char) !== -1) {
             const el = document.createElement('div');
             el.className = 'phone-text';
             el.innerHTML = char;
-            el.id = 'id' + i;
+            el.id = 'id'+i;
+            el.name = i;
             div.appendChild(el);
         } else {
             const el = document.createElement('input');
@@ -25,6 +28,7 @@ function createPhoneNumber(mask = "") {
             el.type = 'text';
             el.maxLength = 1;
             el.id = 'id' + i;
+            el.name = i;
             el.placeholder = '_';
             if (char === '*') {
                 el.value = '\u2981';
@@ -35,10 +39,9 @@ function createPhoneNumber(mask = "") {
             } else if (char === 'I') {
                 el.addEventListener('change', () => {
                     let v = el.value || 'I';
-                    const n = number.value.slice(0, el.id) + v + number.value.slice(parseInt(el.id)+1);
-                    number.value = n;
+                    number.value = number.value.slice(0, parseInt(el.name)) + v +
+                        number.value.slice(parseInt(el.name)+1);
                 });
-
             } else {
                 el.value = char;
                 el.disabled = true;
@@ -53,7 +56,7 @@ function createPhoneNumber(mask = "") {
         if (test.test(mask) !== true)
             return;
         const val = this.value;
-        const div = this.querySelector('div');
+        const div = this.querySelector('.js-number-div');
         i = 0;
         let brackets = '+()-';
         number.value = mask;
@@ -77,9 +80,10 @@ function createPhoneNumber(mask = "") {
                     el.disabled = false;
                     el.value = null;
                     el.addEventListener('change', () => {
-                        number.value = number.value.slice(0, el.id) + el.value + number.value.slice(parseInt(el.id)+1);
+                        let v = el.value || 'I';
+                        number.value = number.value.slice(0,parseInt(el.name)) + v +
+                            number.value.slice(parseInt(el.name)+1);
                     });
-
                 } else {
                     el.value = char;
                     el.disabled = true;
@@ -95,30 +99,30 @@ function createPhoneNumber(mask = "") {
     number.errorOn = function(text='Неверный номер, попробуйте еще раз.') {
         this.errorFlag = true;
         this.errorMsg = text;
-        const el = this.querySelector('.phone-number__error');
+        const el = this.querySelector('.js-number-error');
         if (el) {
             this.removeChild(el);
         }
         const error = document.createElement('div');
-        error.className = 'phone-number__error';
+        error.className = 'phone-number__error js-number-error';
         error.innerText = text;
         this.appendChild(error);
-        const div = this.querySelector('div');
+        const div = this.querySelector('.js-number-div');
         const ch = div.children;
-        for (let i = 0; i < ch.length; i++ ){
-           if (ch[i].disabled === false) {
-               ch[i].classList.add('phone-input_error');
-           }
+        for (let i = 0; i < ch.length; i++ ) {
+            if (ch[i].disabled === false) {
+                ch[i].classList.add('phone-input_error');
+            }
         }
     };
     number.errorOff = function () {
         this.errorFlag = false;
-        const el = this.querySelector('.phone-number__error');
+        const el = this.querySelector('.js-number-error');
         if (el) {
             this.removeChild(el);
         }
         const ch = div.querySelectorAll('.phone-input_error');
-        for (let i = 0; i < ch.length; i++ ){
+        for (let i = 0; i < ch.length; i++ ) {
             ch[i].classList.remove('phone-input_error');
         }
     };
