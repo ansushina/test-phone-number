@@ -5,57 +5,26 @@ function createPhoneNumber(mask = "") {
         return;
     let i = 0;
 
-    let number = document.createElement('phone-number');
-    let inner = '<div class="phone-number">';
-    let brackets = '+()-';
-    for (let char of mask) {
-        if (brackets.indexOf(char) !== -1) {
-            inner += '<div class="phone-text">' + char + '</div>';
-        } else if (char === '*'){
-            inner += `<input id="${i}" type="text" class="phone-input" disabled value="&#10625;" maxlength="1"/>`;
-            i++;
-        } else if (char === 'X') {
-            inner += `<input id="${i}" type="text" class="phone-input" disabled value="X" maxlength="1"/>`;
-            i++;
-        } else if (char === 'I') {
-            inner += '<input  id="${i}" type="text" class="phone-input" placeholder="_" maxlength="1"/>';
-            i++;
-        } else {
-            inner += `<input id="${i}" type="text" class="phone-input" placeholder="_" value="${char}" disabled maxlength="1"/>`;
-            i++;
-        }
-    }
-    inner += ' </div>';
-    number.innerHTML = inner;
-    number.value = mask;
-    return number;
-}
-
-function createPhoneNumber2(mask = "") {
-    const test = /^\+[0-9XI*]{1}\([0-9XI*]{3}\)[0-9XI*]{3}-[0-9XI*]{2}-[0-9XI*]{2}/;
-    if (test.test(mask) !== true)
-        return;
-    let i = 0;
-
     const number = document.createElement('phone-number');
     const div = document.createElement('div');
     div.classList.add('phone-number');
     number.appendChild(div);
     let brackets = '+()-';
     number.value = mask;
+    number.errorFlag = false;
     for (let char of mask) {
         if (brackets.indexOf(char) !== -1) {
             const el = document.createElement('div');
             el.className = 'phone-text';
             el.innerHTML = char;
-            el.id = i;
+            el.id = 'id' + i;
             div.appendChild(el);
         } else {
             const el = document.createElement('input');
             el.className = 'phone-input';
             el.type = 'text';
             el.maxLength = 1;
-            el.id = i;
+            el.id = 'id' + i;
             el.placeholder = '_';
             if (char === '*') {
                 el.value = '\u2981';
@@ -65,7 +34,8 @@ function createPhoneNumber2(mask = "") {
                 el.value = 'X';
             } else if (char === 'I') {
                 el.addEventListener('change', () => {
-                    const n = number.value.slice(0, el.id) + el.value + number.value.slice(parseInt(el.id)+1);
+                    let v = el.value || 'I';
+                    const n = number.value.slice(0, el.id) + v + number.value.slice(parseInt(el.id)+1);
                     number.value = n;
                 });
 
@@ -78,10 +48,85 @@ function createPhoneNumber2(mask = "") {
         i++;
     }
 
+    number.update = function(mask='') {
+        const test = /^\+[0-9XI*]{1}\([0-9XI*]{3}\)[0-9XI*]{3}-[0-9XI*]{2}-[0-9XI*]{2}/;
+        if (test.test(mask) !== true)
+            return;
+        const val = this.value;
+        const div = this.querySelector('div');
+        i = 0;
+        let brackets = '+()-';
+        number.value = mask;
+        for (let char of mask) {
+            if (char === val[i]) {
+                i++;
+                continue;
+            }
+            if (brackets.indexOf(char) !== -1) {
+                const el = div.querySelector(`#id${i}`);
+                el.innerHTML = char;
+            } else {
+                const el = div.querySelector(`#id${i}`);
+                if (char === '*') {
+                    el.value = '\u2981';
+                    el.disabled = true;
+                } else if (char === 'X') {
+                    el.disabled = true;
+                    el.value = 'X';
+                } else if (char === 'I') {
+                    el.disabled = false;
+                    el.value = null;
+                    el.addEventListener('change', () => {
+                        number.value = number.value.slice(0, el.id) + el.value + number.value.slice(parseInt(el.id)+1);
+                    });
+
+                } else {
+                    el.value = char;
+                    el.disabled = true;
+                }
+            }
+            i++;
+        }
+        if (this.errorFlag) {
+            this.errorOn(this.errorMsg);
+        }
+    };
+
+    number.errorOn = function(text='Неверный номер, попробуйте еще раз.') {
+        this.errorFlag = true;
+        this.errorMsg = text;
+        const el = this.querySelector('.phone-number__error');
+        if (el) {
+            this.removeChild(el);
+        }
+        const error = document.createElement('div');
+        error.className = 'phone-number__error';
+        error.innerText = text;
+        this.appendChild(error);
+        const div = this.querySelector('div');
+        const ch = div.children;
+        for (let i = 0; i < ch.length; i++ ){
+           if (ch[i].disabled === false) {
+               ch[i].classList.add('phone-input_error');
+           }
+        }
+    };
+    number.errorOff = function () {
+        this.errorFlag = false;
+        const el = this.querySelector('.phone-number__error');
+        if (el) {
+            this.removeChild(el);
+        }
+        const ch = div.querySelectorAll('.phone-input_error');
+        for (let i = 0; i < ch.length; i++ ){
+            ch[i].classList.remove('phone-input_error');
+        }
+    };
     return number;
 }
 
 
+
 let a = document.querySelector('.main');
-a.appendChild(createPhoneNumber2('+7(909)***-II-XX'));
+a.appendChild(createPhoneNumber('+7(909)***-II-XX'));
 a.appendChild(createPhoneNumber('+8(999)III-II-XX'));
