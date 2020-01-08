@@ -38,6 +38,11 @@ function createPhoneNumber(mask = '') {
                 el.value = 'X';
             } else if (char === 'I') {
                 el.addEventListener('change', () => {
+                    if (!parseInt(el.value)) {
+                        number.errorOn();
+                    } else {
+                        number.errorOff();
+                    }
                     const v = el.value || 'I';
                     number.value = number.value.slice(0, parseInt(el.name)) + v +
                         number.value.slice(parseInt(el.name)+1);
@@ -80,6 +85,11 @@ function createPhoneNumber(mask = '') {
                     el.disabled = false;
                     el.value = null;
                     el.addEventListener('change', () => {
+                        if (!parseInt(el.value)) {
+                            number.errorOn();
+                        } else {
+                            number.errorOff();
+                        }
                         const v = el.value || 'I';
                         number.value = number.value.slice(0,parseInt(el.name)) + v +
                             number.value.slice(parseInt(el.name)+1);
