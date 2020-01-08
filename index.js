@@ -13,8 +13,8 @@ function createPhoneNumber(mask = '') {
     number.value = mask;
     number.errorFlag = false;
 
-    let brackets = '+()-';
-    for (let char of mask) {
+    const brackets = '+()-';
+    for (const char of mask) {
         if (brackets.indexOf(char) !== -1) {
             const el = document.createElement('div');
             el.className = 'phone-text';
@@ -38,7 +38,7 @@ function createPhoneNumber(mask = '') {
                 el.value = 'X';
             } else if (char === 'I') {
                 el.addEventListener('change', () => {
-                    let v = el.value || 'I';
+                    const v = el.value || 'I';
                     number.value = number.value.slice(0, parseInt(el.name)) + v +
                         number.value.slice(parseInt(el.name)+1);
                 });
@@ -58,9 +58,9 @@ function createPhoneNumber(mask = '') {
         const val = this.value;
         const div = this.querySelector('.js-number-div');
         i = 0;
-        let brackets = '+()-';
+        const brackets = '+()-';
         number.value = mask;
-        for (let char of mask) {
+        for (const char of mask) {
             if (char === val[i]) {
                 i++;
                 continue;
@@ -80,7 +80,7 @@ function createPhoneNumber(mask = '') {
                     el.disabled = false;
                     el.value = null;
                     el.addEventListener('change', () => {
-                        let v = el.value || 'I';
+                        const v = el.value || 'I';
                         number.value = number.value.slice(0,parseInt(el.name)) + v +
                             number.value.slice(parseInt(el.name)+1);
                     });
@@ -128,8 +128,6 @@ function createPhoneNumber(mask = '') {
     };
     return number;
 }
-
-
 
 let a = document.querySelector('.main');
 a.appendChild(createPhoneNumber('+7(909)***-II-XX'));
